@@ -21,6 +21,16 @@
   z-index: 1;
 }
 
+.cardLayout {
+  display: grid;
+  grid-template-columns: repeat(auto, minmax(0, 1fr));
+  grid-gap: 1.5rem;
+}
+
+.card {
+  justify-content: center;
+}
+
 /** Breakpoints:
   sm: min-width: 640px;
   md: min-width: 768px;
@@ -40,6 +50,11 @@
     padding-left: 1.5rem /* 24px */;
     padding-right: 1.5rem /* 24px */;
   }
+
+  .cardLayout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-gap: 1.5rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -56,6 +71,11 @@
     right: 20%;
     z-index: -100;
   }
+
+  .cardLayout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-gap: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -71,5 +91,10 @@
 
   .heroImage {
     right: 20%;
+  }
+
+  .cardLayout {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-gap: 1.5rem;
   }
 }
