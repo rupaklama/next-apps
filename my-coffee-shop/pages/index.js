@@ -6,9 +6,23 @@ import Banner from "../components/banner";
 
 import Image from "next/image";
 import Card from "../components/Card";
+
 import data from "../mock-data/coffee-stores.json";
 
-export default function Home() {
+// getStaticProps is exporting a func from a page file
+// getStaticProps runs on a build time - next build
+
+// passing external api data as props
+export async function getStaticProps(context) {
+  // api call can be made here
+  return {
+    // will be passed to the page component as props
+    props: { data },
+  };
+}
+
+// note - above external api data will be pass here as props
+export default function Home(props) {
   const onClick = () => {
     console.log("clicked");
   };
@@ -27,18 +41,24 @@ export default function Home() {
           <Image src="/static/hero-image.png" alt="hero image" width={700} height={400} />
         </div>
 
-        <div className={styles.cardLayout}>
-          {data.map(card => (
-            <Card
-              key={card.id}
-              className={styles.card}
-              name={card.name}
-              imgUrl={card.imgUrl}
-              alt={card.name}
-              href={`/coffee-store/${card.id}`}
-            />
-          ))}
-        </div>
+        {props.data.length > 0 && (
+          <>
+            <h2 className={styles.headingTwo}>Toronto stores</h2>
+
+            <div className={styles.cardLayout}>
+              {props.data.map(card => (
+                <Card
+                  key={card.id}
+                  className={styles.card}
+                  name={card.name}
+                  imgUrl={card.imgUrl}
+                  alt={card.name}
+                  href={`/coffee-store/${card.id}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
