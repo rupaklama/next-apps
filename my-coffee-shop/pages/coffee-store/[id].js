@@ -8,41 +8,58 @@ import styles from "../../styles/coffee-store.module.css";
 import cls from "classnames";
 
 import Image from "next/image";
+import { fetchData } from "../../utils";
 
 // `getStaticPaths` requires using `getStaticProps` to pre-render a path
 export async function getStaticProps(staticProps) {
-  // note - this code runs in the Server & we have access to params object for queries
+  // note - we have access to params object for queries in the server to get the 'id'
+  // with the help of getStaticPaths func
   const params = staticProps.params;
+  console.log("server params", params);
+
+  // api call
+  const results = await fetchData();
 
   return {
-    props: data.find(item => item.id.toString() === params.id),
+    // will be passed to the page component as props
+    props: results.find(item => item.fsq_id.toString() === params.id),
   };
 }
-// Dynamic Routes uses getStaticPaths
+// getStaticPaths func is to Pre-render Dynamic Routes
 export async function getStaticPaths() {
+  // api call
+  const results = await fetchData();
+
   // dynamically passing params id
-  const paths = data.map(item => {
+  const paths = results.map(item => {
     return {
       params: {
-        id: item.id.toString(),
+        id: item.fsq_id.toString(),
       },
     };
   });
 
   return {
+    // notes: paths is an array with objects that should be in below format
     // paths: [{ params: { id: "0" } }, { params: { id: "1" } }],
     paths: paths,
 
-    // if page does not exists, false returns 404 page
-    fallback: false,
+    // this key is required
+    // if page does not exists with the id, false returns 404 page
+    // fallback: false,
+    fallback: true,
+    // true -  tries to access the page even if page doesn't exits
+    // useful to display the loading state else to display errors when no data or api fails
   };
 }
 
 const CoffeeStore = props => {
-  const { name, address, neighbourhood, imgUrl } = props;
+  const { name, location, neighbourhood, imgUrl } = props;
 
   // param id
   const router = useRouter();
+  // note - router object has all the useful properties base on the env
+  console.log("available in the client & server", router);
 
   if (router.isFallback) return <p>Loading...</p>;
 
@@ -73,18 +90,19 @@ const CoffeeStore = props => {
         </div>
 
         <div className={cls("glass", styles.col2)}>
-          {address && (
+          {location.address && (
             <div className={styles.iconWrapper}>
               <Image src="/static/icons/places.svg" width="24" height="24" alt="places icon" />
-              <p className={styles.text}>{address}</p>
+              <p className={styles.text}>{location.address}</p>
             </div>
           )}
-          {neighbourhood && (
+          {location.locality && (
             <div className={styles.iconWrapper}>
-              <Image src="/static/icons/nearMe.svg" width="24" height="24" alt="near me icon" />
-              <p className={styles.text}>{neighbourhood}</p>
+              {/* <Image src="/static/icons/nearMe.svg" width="24" height="24" alt="near me icon" /> */}
+              <p className={styles.text}>{location.locality}</p>
             </div>
           )}
+
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" width="24" height="24" alt="star icon" />
             <p className={styles.text}>{1}</p>
