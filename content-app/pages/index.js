@@ -4,13 +4,34 @@ import Newsletter from "../components/Newsletter";
 import ResourceHighlight from "../components/ResourceHighlight";
 import ResourceList from "../components/ResourceList";
 
+// import resources from "./api/data.json";
+
+export async function getStaticProps() {
+  try {
+    const response = await fetch("http://localhost:3000/api/resources");
+
+    if (response.status === 200) {
+      const data = await response.json();
+
+      return {
+        props: {
+          resources: data,
+        },
+      };
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+}
+
 // Home page
-const Home = () => {
+const Home = ({ resources }) => {
   return (
     <Layout>
-      <ResourceHighlight />
+      <ResourceHighlight resources={resources} />
       <Newsletter />
-      <ResourceList />
+      <ResourceList resources={resources} />
+
       <Footer />
     </Layout>
   );
