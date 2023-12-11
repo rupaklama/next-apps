@@ -45,7 +45,6 @@ export async function getServerSideProps() {
 
 // Home page
 const Home = ({ resources }) => {
-  
   return (
     <Layout>
       <ResourceHighlight resources={resources} />

@@ -15,7 +15,22 @@ const ResourceCreate = () => {
   const handleFormSubmit = e => {
     e.preventDefault();
     // alert(JSON.stringify(form));
-    console.log(form);
+    fetch("http://localhost:3001/api/resources", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    })
+      .then(res => {
+        if (res.status !== 200) {
+          throw Error("Form values are missing");
+        }
+      })
+      .catch(err => {
+        console.error(err.message);
+        alert(err.message);
+      });
   };
 
   const handleFormValueChange = e => {
