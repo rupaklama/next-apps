@@ -31,7 +31,7 @@ app.post("/api/resources", (req, res) => {
 
   const resource = req.body;
   if (!resource.title || !resource.description || !resource.link) {
-    return res.status(400).send("fields values are missing");
+    return res.status(400).send("one or more field values are missing");
   }
 
   resource.id = Date.now().toString();
@@ -47,6 +47,40 @@ app.post("/api/resources", (req, res) => {
   });
 
   res.status(201).send("new resource created!");
+});
+
+app.all("*", (req, res, next) => {
+  // creating error object with msg & defining the status, statusCode
+  const err = new Error(`Can't find ${req.originalUrl} on this server!`);
+  err.status = "fail";
+  err.statusCode = 404;
+
+  next(err);
+});
+
+// Global Error handler express middleware
+app.use((err, req, res, next) => {
+  // stack trace are details where the error occurred
+  console.log(err.stack);
+
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+
+  if (process.env.NODE_ENV === "development") {
+    res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else if (process.env.NODE_ENV === "production") {
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+    });
+  }
+
+  next();
 });
 
 const PORT = 3001;

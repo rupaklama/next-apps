@@ -24,12 +24,12 @@ const ResourceCreate = () => {
     })
       .then(res => {
         if (res.status !== 200) {
-          throw Error("Form values are missing");
+          throw Error("one or more field values missing");
         }
       })
       .catch(err => {
         console.error(err.message);
-        alert(err.message);
+        return err.message;
       });
   };
 
